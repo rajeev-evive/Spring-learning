@@ -264,6 +264,62 @@ public class CustomerServiceImpl implements CustomerService {
         this.customerRepository = customerRepository;
     }
 
+Scope:
+------
+1.singelton - which is default.
+restrict the instantiate of class to one object.single instance per spring container.
+@scope("singelton") is used as annotation to add scope.
+
+ CustomerService service=appContext.getBean("customerService",CustomerService.class);
+
+ CustomerService service2=appContext.getBean("customerService",CustomerService.class);
+
+ System.out.println(service);//print address
+ System.out.println(service2);
+ and we will get same object address each time.
+ 
+ we can use configurationBeanFactory.SCOPE_SINGLETON inside scope.
+
+2.prototype.
+it gives unique identities with each request,we will get unique object address each time.
+we can use configurationBeanFactory.SCOPE_PROTOTYPE inside scope.
+
+>>valid only in web aware spring projects:
+3.Request - returns a bean per http request which sounds a lot like prototype excepts it's for the life cycle of a request 
+  which is fairly short but longer than a prototype where its one instance per every time i ask the container for a bean .
+4. session - returns a single bean per http request and live long as user session is alive.a bean of session will live along 
+   with user time alive on website.
+5. global - returns a single bean per application and it will share across all user on application and it alive for duration
+   of my application.
+   
+   
+Properties file:
+----------------
+great way to abstract congiguration like id password url.
+
+first create app.properties
+put dbUsername=mysqlusername
+
+<context:property-placeholder location="app.properties"/>
+<bean name="customerRepository" 
+      class="com.pluralsight..repository.HibernatecustomerRepositoryImpl">
+    <property name="dbUsername" value="${dbUsername}" />
+</bean>
+and in HibernatecustomerRepositoryImpl.java 
+and create private string dbUsername;
+and create setter for that.
+and print dbUsername inside method.
+
+for annotation we need to chance annotation config in applicationcontext.xml
+@value("${dbUsername}")
+-------------------------------
+java configuration:
+@propertySource("app.properties")
+
+and in Appconfig.java
+public PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return propertySourcesPlaceholderConfigurer();
+    }
 
 
 
