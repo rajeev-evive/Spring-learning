@@ -1,0 +1,270 @@
+>>This spring tutorial provides in-depth concepts of Spring Framework with simplified examples. It was developed by Rod Johnson in 2003. Spring framework makes the easy development of JavaEE application.
+
+>>The IoC container is responsible to instantiate, configure and assemble the objects. The IoC container gets informations from the XML file and works accordingly. The main tasks performed by IoC container are:
+
+1.to instantiate the application class
+2.to configure the object
+3.to assemble the dependencies between the objects
+There are two types of IoC containers,They are:
+-----------------------------------------------
+BeanFactory
+ApplicationContext
+
+Difference between BeanFactory and the ApplicationContext:
+----------------------------------------------------------
+The org.springframework.beans.factory.BeanFactory and the org.springframework.context.ApplicationContext interfaces acts as the IoC container. The ApplicationContext interface is built on top of the BeanFactory interface. It adds some extra functionality than BeanFactory such as simple integration with Spring's AOP, message resource handling (for I18N), event propagation, application layer specific context (e.g. WebApplicationContext) for web application. So it is better to use ApplicationContext than BeanFactory.
+
+Using BeanFactory:
+------------------
+The XmlBeanFactory is the implementation class for the BeanFactory interface. To use the BeanFactory, we need to create the instance of XmlBeanFactory class as given below:
+
+Resource resource=new ClassPathResource("applicationContext.xml");  
+BeanFactory factory=new XmlBeanFactory(resource);  
+The constructor of XmlBeanFactory class receives the Resource object so we need to pass the resource object to create the object of BeanFactory.
+
+Using ApplicationContext:
+-------------------------
+The ClassPathXmlApplicationContext class is the implementation class of ApplicationContext interface. We need to instantiate the ClassPathXmlApplicationContext class to use the ApplicationContext as given below:
+
+ApplicationContext context =   
+    new ClassPathXmlApplicationContext("applicationContext.xml");  
+The constructor of ClassPathXmlApplicationContext class receives string, so we can pass the name of the xml file to create the instance of ApplicationContext.
+
+
+
+
+in case of setter injection ::>>
+--------------------------------
+for list:
+---------
+<bean id="q" class="com.practice.Question">  
+<property name="id" value="1"></property>  
+<property name="name" value="What is Java?"></property>  
+<property name="answers">  
+<list>  
+<value>Java is a programming language</value>  
+<value>Java is a platform</value>  
+<value>Java is an Island</value>  
+</list>  
+</property>  
+</bean> 
+
+Our Example:
+------------ 
+
+in this class we are making a object of customerRepository = new customerRepositoryImpl();
+* but instead of that we are using setter injection.
+* so for that here we removed new and created constructor for the class in which we want to call method
+* and in bean xml file pass object of that.
+
+*<bean name="foo" class="com.pluralsight.repositoty.HibernateCustomerRepositoryImpl" />
+
+    <bean name="customerService"
+          class="com.pluralsight.service.CustomerServiceImpl">
+        <property name="customerRepository" ref="foo"></property>
+    </bean>
+
+here we created bean of both class and pass the bean of class for which we created object .
+
+Constructor injection is index based while setter injection is name based.
+
+
+in case of Constructor injection ::>>
+-------------------------------------
+We can inject the dependency by constructor. The <constructor-arg> subelement of <bean> is used for constructor injection. Here we are going to inject
+
+primitive and String-based values:
+__________________________________
+
+<bean id="e" class="com.practice.Employee">  
+<constructor-arg value="10" type="int" ></constructor-arg>  
+<constructor-arg value="Sonoo"></constructor-arg>  
+</bean> 
+
+Dependent object (contained object):
+------------------------------------
+<bean id="a1" class="com.practice.Address">  
+<constructor-arg value="ghaziabad"></constructor-arg>  
+<constructor-arg value="UP"></constructor-arg>  
+<constructor-arg value="India"></constructor-arg>  
+</bean>  
+  
+  
+<bean id="e" class="com.practice.Employee">  
+<constructor-arg value="12" type="int"></constructor-arg>  
+<constructor-arg value="Sonoo"></constructor-arg>  
+<constructor-arg>  
+<ref bean="a1"/>  
+</constructor-arg>  
+</bean>  
+
+Collection values etc:
+----------------------
+<bean id="q" class="com.practice.Question">  
+<constructor-arg value="111"></constructor-arg>  
+<constructor-arg value="What is java?"></constructor-arg>  
+<constructor-arg>  
+<list>  
+<value>Java is a programming language</value>  
+<value>Java is a Platform</value>  
+<value>Java is an Island of Indonasia</value>  
+</list>  
+</constructor-arg>  
+</bean>  
+
+
+Our Example:
+------------
+<bean name="customerRepository" class="com.pluralsight.repositoty.HibernateCustomerRepositoryImpl" />
+
+    <bean name="customerService"
+          class="com.pluralsight.service.CustomerServiceImpl">
+        <constructor-arg index="0" ref="customerRepository"/>
+    </bean>
+
+in case of Constructor Autowire ::>>
+-------------------------------------
+Spring automaticallys wires Beans
+byTypes
+byName
+constructor
+no
+
+1) byName autowiring mode
+In case of byName autowiring mode, bean id and reference name must be same.
+
+It internally uses setter injection.
+
+<bean id="b" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="byName"></bean>  
+But, if you change the name of bean, it will not inject the dependency.
+
+Let's see the code where we are changing the name of the bean from b to b1.
+
+<bean id="b1" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="byName"></bean>
+
+2) byType autowiring mode
+
+In case of byType autowiring mode, bean id and reference name may be different. But there must be only one bean of a type.
+
+It internally uses setter injection.
+
+<bean id="b1" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="byType"></bean>  
+In this case, it works fine because you have created an instance of B type. It doesn't matter that you have different bean name than reference name.
+
+But, if you have multiple bean of one type, it will not work and throw exception.
+
+Let's see the code where are many bean of type B.
+
+<bean id="b1" class="org.sssit.B"></bean>  
+<bean id="b2" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="byName"></bean>  
+In such case, it will throw exception.
+
+3) constructor autowiring mode
+
+In case of constructor autowiring mode, spring container injects the dependency by highest parameterized constructor.
+
+If you have 3 constructors in a class, zero-arg, one-arg and two-arg then injection will be performed by calling the two-arg constructor.
+
+<bean id="b" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="constructor"></bean>  
+
+4) no autowiring mode
+
+In case of no autowiring mode, spring container doesn't inject the dependency by autowiring.
+
+<bean id="b" class="org.sssit.B"></bean>  
+<bean id="a" class="org.sssit.A" autowire="no"></bean>  
+
+constructor case:
+-----------------
+<bean name="customerRepository" class="com.pluralsight.repositoty.HibernateCustomerRepositoryImpl" />
+
+    <bean name="customerService"
+          class="com.pluralsight.service.CustomerServiceImpl" autowire="constructor">
+        <!--<constructor-arg index="0" ref="customerRepository"/>-->
+        <!--<property name="customerRepository" ref="foo"></property>-->
+</bean>
+
+
+
+byTypes:
+----------
+
+    <bean name="customerService"
+          class="com.pluralsight.service.CustomerServiceImpl" autowire="byType">
+
+it will lookup for argument at customerRepository setter injection method.
+
+byType doesn't care about bean name and method naming convention but not same case with byName.
+
+
+>>There are many key differences between constructor injection and setter injection.
+
+Partial dependency: can be injected using setter injection but it is not possible by constructor. Suppose there are 3 properties in a class, having 3 arg constructor and setters methods. In such case, if you want to pass information for only one property, it is possible by setter method only.
+
+Overriding: Setter injection overrides the constructor injection. If we use both constructor and setter injection, IOC container will use the setter injection.
+
+Changes: We can easily change the value by setter injection. It doesn't create a new bean instance always like constructor. So setter injection is flexible than constructor injection.
+
+
+-------------------------------------
+
+ <context:annotation-config/>
+    
+    <context:component-scan base-package="com.pluralsight"/>
+
+
+
+this tells that we are using annotation configuration and it starts scanning from base package specified.
+
+
+@component - any thing inside our application we marked as beans(any pojo-plain old java object).
+@service - business logic layer.
+@Repository - data base layer what ever we choose like jpa,hibernate.
+
+---------------
+AUTOWIRE:
+---------------
+Better with annotation
+Tied with location
+we can autowire at 3 places :
+-----------------------------
+1.Member variable
+2.constructor
+3.setter
+
+1.Member variable
+------------------
+
+@Service("customerService")
+public class CustomerServiceImpl implements CustomerService {
+
+    @Autowired
+    private CustomerRepository customerRepository;
+
+    @Override
+    public List<Customer> findAll(){
+        return customerRepository.findAll();
+        }
+2.setter:
+---------------
+  @Autowired
+    public void setCustomerRepository(CustomerRepository customerRepository) {
+        System.out.println("setter injection");
+        this.customerRepository = customerRepository;
+    }
+3.constructor:
+--------------
+ @Autowired
+    public CustomerServiceImpl(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
+
+
+
+
+
