@@ -1,6 +1,35 @@
+spring is a framework used for enterprise application.
+web appl:
+1. Html,css,js,xml,etc  + servlet - create dynamic website(web app)
+servlet :- 
+1. java pgm
+2. server side.
+3. Api
+
+enterprise appl:
+load balance , security , transaction mgmt , distribution -(J2EE APPLICATION)
+it become complex then EJB comes.
+
+web server and application server 
+web server : it contains servlet container (to run web application) 
+it can run only web application.
+
+application server :
+it contains ws and like (ejb container ).
+
+for spring application we need application server.
+
+advantage of spring :
+1. Loose coupling.
+2. Testability.
+3. predefined template.
+4. framework support.
+5. Light weight.
+
 >>This spring tutorial provides in-depth concepts of Spring Framework with simplified examples. It was developed by Rod Johnson in 2003. Spring framework makes the easy development of JavaEE application.
 
 >>The IoC container is responsible to instantiate, configure and assemble the objects. The IoC container gets informations from the XML file and works accordingly. The main tasks performed by IoC container are:
+invert the flow of control.
 
 1.to instantiate the application class
 2.to configure the object
